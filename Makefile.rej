@@ -1,0 +1,55 @@
+--- Makefile	2020-05-05 11:14:55.000000000 +0200
++++ Makefile	2020-05-27 09:47:59.574612230 +0200
+@@ -2,7 +2,7 @@
+ PXE=boot.PXE
+ 
+ CC= gcc
+-CFLAGS= -m32 -std=c99 -nostdlib -nostdinc -fno-builtin -fno-stack-protector \
++CFLAGS= -m32 -g -std=c99 -nostdlib -nostdinc -fno-builtin -fno-stack-protector \
+          -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -Iinclude
+ 
+ LD= ld
+@@ -16,7 +16,10 @@
+ LIBS= lib/lib.o
+ 
+ QEMU = /usr/bin/qemu-system-i386
+-QEMUOPTS = -cpu pentium -rtc base=localtime -m 64M -gdb tcp::1234 -S -kernel kernel.bin
++QEMUOPTS = -cpu pentium -rtc base=localtime -k fr -m 256M -D /tmp/qemu_log.txt  -kernel kernel.bin
++QEMUGDB= -S -gdb tcp::1234
++
++DEBUG=gdb
+ 
+ # cible principale, on nettoie tout avant
+ .PHONY: all
+@@ -34,18 +37,27 @@
+ boot/crt0.o:
+ 	(cd boot ; make)
+ 
++bin/app.o:
++	(cd bin ; make)
++
+ # generation du noyau
+-kernel.bin: boot/crt0.o $(LIBS) kernel/task_dump_screen.o kernel/kernel.o
++kernel.bin: boot/crt0.o $(LIBS) kernel/task_dump_screen.o bin/app.o kernel/kernel.o
+ 	$(LD) $(LDFLAGS) -e entry -Tboot/kernel.lds $^ -o $@
+ 
+ clean:
++	(cd bin ; make clean)
+ 	(cd lib ; make clean)
+ 	(cd kernel ; make clean)
+ 	(cd boot ; make clean)
+-	rm -f $(KERNEL)
++	rm -f $(KERNEL) core *~
++
++dbg: kernel.bin
++	$(QEMU) $(QEMUOPTS) $(QEMUGDB) &
++	$(DEBUG)$  $^
++	pkill qemu
+ 
+-run:
++run: kernel.bin
+ 	$(QEMU) $(QEMUOPTS)
+ 
+ archive: clean
+-	(cd .. ; tar cvf - n7OS | gzip > n7OS.tgz)
++	(cd .. ; tar cvf - n7OS | gzip > n7OS_`date +"%F"`.tgz)
