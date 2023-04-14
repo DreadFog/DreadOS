@@ -1,13 +1,15 @@
 #include <inttypes.h>
 #include <n7OS/irq.h>
 #include <stdio.h>
+#include <n7OS/sys.h>
 #define TASK_GATE 5
 #define INTERRUPT_GATE 6
 #define TRAP_GATE 7
 extern void handler_IT_50();
+extern void handler_syscall();
 void init_irq_entry(int irq_num, uint32_t addr)
 {
-    idt_entry_t *entry = (idt_entry_t *) &idt[irq_num];
+    idt_entry_t *entry = (idt_entry_t *)&idt[irq_num];
     entry->offset_inf = addr & 0xFFFF;
     entry->sel_segment = KERNEL_CS;
     entry->zero = 0;
@@ -16,10 +18,12 @@ void init_irq_entry(int irq_num, uint32_t addr)
     entry->offset_sup = (addr >> 16) & 0xFFFF;
 }
 
-void init_handler(){
-    init_irq_entry(50, (uint32_t)handler_IT_50);
-}
 void handler_50()
 {
     printf("handler_50\n");
+}
+void init_handlers()
+{
+    init_syscall();
+    init_irq_entry(50, (uint32_t)handler_IT_50);
 }

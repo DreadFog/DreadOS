@@ -4,16 +4,17 @@
 #include <stdio.h>
 #include <n7OS/irq.h>
 #include <n7OS/console.h>
+#include <unistd.h>
 void kernel_start(void)
 {
-    init_handler();
+    init_handlers();
+    clear_console();
     sti();
     // on ne doit jamais sortir de kernel_start
     while (1)
     {
         // cette fonction arrete le processeur
-        clear_console();
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 3; i++)
         {
             printf("%d", i);
             printf("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbcccccccccc\n");
@@ -21,6 +22,11 @@ void kernel_start(void)
             __asm__("int $50");
         }
         console_putbytes_position("Test with offset", 17, 10, 40);
+        if (example() == 1)
+        {
+            printf("Appel systeme example ok");
+        }
+        // shutdown(1);
         hlt();
     }
 }

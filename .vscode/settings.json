@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "sys.h": "c",
+        "functional": "c",
+        "iosfwd": "c",
+        "limits": "c",
+        "ratio": "c",
+        "streambuf": "c",
+        "system_error": "c",
+        "utility": "c",
+        "*.inc": "c",
+        "inttypes.h": "c",
+        "stdio.h": "c"
+    }
+}

@@ -29,5 +29,5 @@ void init_irq_entry(int irq_num, uint32_t addr);
 
 #endif
 
-void init_handler();
+void init_handlers();
 void handler_50();
