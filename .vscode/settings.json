@@ -10,6 +10,8 @@
         "utility": "c",
         "*.inc": "c",
         "inttypes.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "cpu.h": "c",
+        "console.h": "c"
     }
 }

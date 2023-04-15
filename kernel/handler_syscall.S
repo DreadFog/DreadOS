@@ -1,7 +1,7 @@
 .text
 
 # c'est le nombre total d'appels systeme
-nr_syscall = 2
+nr_syscall = 3
 
 .globl handler_syscall
 
@@ -16,7 +16,7 @@ handler_syscall:
   pushl %ecx
   pushl %ebx
   # appel à la fonction de traitement de l'AS : syscall_table[i] (i==%eax)
- # call *syscall_table(,%eax,4)
+ call *syscall_table(,%eax,4)
   # on re-dépile
   popl %ebx
   popl %ecx
