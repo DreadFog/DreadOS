@@ -15,19 +15,26 @@ void kernel_start(void)
     // on ne doit jamais sortir de kernel_start
     while (1)
     {
+        change_color(GREEN, BLUE);
         // cette fonction arrete le processeur
         for (int i = 0; i < 3; i++)
         {
-            //printf("%d", i);
+            printf("%d", i);
             //__asm__("int $50");
         }
-        //console_putbytes_position("Test with offset", 17, 10, 40);
+        // console_putbytes_position("Test with offset", 17, 10, 40);
         /* if (example() == 1)
-        {
+        {    set_layout();
+
             printf("Appel systeme example ok");
         } */
-        //shutdown(1);
-        //while(1);
-        hlt();
+        // shutdown(1);
+        // while(1);
+        change_color(BLACK, WHITE);
+        for (;;)
+        {
+            //printf("Hello World");
+            hlt();
+        }
     }
 }

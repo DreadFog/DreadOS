@@ -4,7 +4,7 @@ extern void handler_IT_timer();
 uint32_t curr_time = 0;
 uint32_t f_osc = 0x1234BD; // 1.19 MHz
 uint32_t f = 1000;
-uint8_t t[3] = {0, 0, 0}; // [s, mins, h]
+time_t time;
 int millis_per_sec;
 int millis_per_min;
 int millis_per_hour;
@@ -15,9 +15,9 @@ void init_timer(uint32_t clock_freq)
     millis_per_min = 60 * millis_per_sec;
     millis_per_hour = 60 * millis_per_min;
     curr_time = 0;
-    t[0] = 0;
-    t[1] = 0;
-    t[2] = 0;
+    time.seconds = 0;
+    time.minutes = 0;
+    time.hours = 0;
     f = f_osc / clock_freq;
     // PIT configuration
     outb(0x34, 0x43);
@@ -30,10 +30,10 @@ void init_timer(uint32_t clock_freq)
 }
 void update_time()
 {
-    t[2] = curr_time / millis_per_hour;
-    t[1] = (curr_time % millis_per_hour) / millis_per_min;
-    t[0] = (curr_time % millis_per_min) / millis_per_sec;
-    printf("%d:%d:%d\n", t[2], t[1], t[0]);
+    time.hours = curr_time / millis_per_hour;
+    time.minutes = (curr_time % millis_per_hour) / millis_per_min;
+    time.seconds = (curr_time % millis_per_min) / millis_per_sec;
+    console_print_time(time.hours, time.minutes, time.seconds);
 }
 void handler_timer()
 {

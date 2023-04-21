@@ -13,5 +13,10 @@
 #define PIC2_COMMAND	PIC2
 #define PIC2_DATA	(PIC2+1)
 #endif
+typedef struct {
+    uint32_t seconds;
+    uint32_t minutes;
+    uint32_t hours;
+} time_t;
 void init_timer(uint32_t clock_freq);
 void handler_timer();
