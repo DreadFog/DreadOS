@@ -6,16 +6,15 @@
 typedef uint32_t pid_t;
 typedef enum {
     RUNNING,
-    WAITING,
-    SLEEPING,
-    ZOMBIE,
-    DEAD
+    READY,
+    BLOCKED
 } PROCESS_STATE;
 typedef struct resource_t {
     void *resource;
     struct resource_t *next;
 } RESOURCE;
 struct process_t {
+    const char *name;
     void *stack;
     PROCESS_STATE state;
     pid_t pid;
@@ -23,5 +22,5 @@ struct process_t {
     RESOURCE *resources;
     pid_t children[NB_PROC] ; // keep in mind the pid of the children. Idk if useful
 };
-struct process_t *processes[NB_PROC];
+//struct process_t *processes[NB_PROC];
 #endif
