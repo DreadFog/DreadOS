@@ -6,6 +6,7 @@
 #include <n7OS/console.h>
 #include <unistd.h>
 #include <n7OS/time.h>
+#include <stddef.h>
 void kernel_start(void)
 {
     init_handlers();
@@ -31,6 +32,7 @@ void kernel_start(void)
         // shutdown(1);
         // while(1);
         change_color(BLACK, WHITE);
+        fork("test", NULL );
         for (;;)
         {
             //printf("Hello World");

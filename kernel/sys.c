@@ -46,10 +46,14 @@ int sys_write(const char *s, int len)
   console_putbytes(s, len);
   return 1;
 }
+// fork syscall
 int sys_fork(const char *name, fn_ptr function)
 {
+  console_putbytes(name, 10); // debug
+  create_process(name, function);
   return 1; // TODO
 }
+// exit syscall
 int sys_exit()
 {
   return 1;

@@ -12,6 +12,7 @@
         "stop_token": "cpp",
         "streambuf": "cpp",
         "*.rh": "cpp",
-        "backup": "cpp"
+        "backup": "cpp",
+        "unistd.h": "c"
     }
 }
