@@ -50,7 +50,7 @@ int sys_write(const char *s, int len)
 int sys_fork(const char *name, fn_ptr function)
 {
   console_putbytes(name, 10); // debug
-  create_process(name, function);
+  //create_process(name, function);
   return 1; // TODO
 }
 // exit syscall
