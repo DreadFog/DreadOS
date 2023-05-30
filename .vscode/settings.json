@@ -13,6 +13,7 @@
         "streambuf": "cpp",
         "*.rh": "cpp",
         "backup": "cpp",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "proc.h": "c"
     }
 }

@@ -7,12 +7,21 @@
 #include <unistd.h>
 #include <n7OS/time.h>
 #include <stddef.h>
+#include <n7OS/proc.h>
+/* void compteur(void)
+{
+    for (int i = 0; i < 10  ; i++)
+    {
+        printf("%d\n", i);
+    }
+} */
 void kernel_start(void)
 {
     init_handlers();
     init_timer(1000);
     clear_console();
     sti();
+    init_process_table(kernel_start);
     // on ne doit jamais sortir de kernel_start
     while (1)
     {
@@ -32,7 +41,7 @@ void kernel_start(void)
         // shutdown(1);
         // while(1);
         change_color(BLACK, WHITE);
-        fork("test", NULL );
+        fork("compteur", NULL);
         for (;;)
         {
             //printf("Hello World");
@@ -40,3 +49,5 @@ void kernel_start(void)
         }
     }
 }
+
+

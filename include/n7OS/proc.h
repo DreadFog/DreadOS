@@ -26,12 +26,11 @@ typedef struct process_t {
     pid_t pid;
     pid_t ppid;
     RESOURCE *resources;
+    uint8_t is_available:1;
     //pid_t children[NB_PROC] ; // keep in mind the pid of the children. Idk if useful
-} PROCESS;
+} process_t;
 void init_process_table();
-PROCESS *create_process(const char *name, pid_t ppid);
-/*void add_process(PROCESS *process);
-void remove_process(PROCESS *process);
+process_t * add_process(const char *name, pid_t ppid, fnptr function);
 void remove_process_by_pid(pid_t pid);
-PROCESS *get_process_by_pid(pid_t pid); */
+process_t *get_process_by_pid(pid_t pid);
 #endif
