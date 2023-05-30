@@ -11,11 +11,11 @@ extern void handler_syscall();
 void init_syscall()
 {
   // ajout de la fonction de traitement de l'appel systeme
-  add_syscall(NR_example, sys_example);
-  add_syscall(NR_shutdown, sys_shutdown);
-  add_syscall(NR_write, sys_write);
-  add_syscall(NR_fork, sys_fork);
-  add_syscall(NR_exit, sys_exit);
+  add_syscall(NR_example, (void *)sys_example);
+  add_syscall(NR_shutdown, (void *)sys_shutdown);
+  add_syscall(NR_write, (void *)sys_write);
+  add_syscall(NR_fork, (void *)sys_fork);
+  add_syscall(NR_exit, (void *)sys_exit);
   // initialisation de l'IT soft qui gère les appels systeme
   init_irq_entry(0x80, (uint32_t)handler_syscall);
 }
@@ -47,7 +47,7 @@ int sys_write(const char *s, int len)
   return 1;
 }
 // fork syscall
-int sys_fork(const char *name, fn_ptr function)
+int sys_fork(const char *name, fnptr function)
 {
   return exec_fork(name, (void (*)(void))function);
 }

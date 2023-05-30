@@ -8,13 +8,13 @@
 #include <n7OS/time.h>
 #include <stddef.h>
 #include <n7OS/proc.h>
-/* void compteur(void)
+void compteur(void)
 {
     for (int i = 0; i < 10  ; i++)
     {
         printf("%d\n", i);
     }
-} */
+}
 void kernel_start(void)
 {
     init_handlers();
@@ -41,7 +41,8 @@ void kernel_start(void)
         // shutdown(1);
         // while(1);
         change_color(BLACK, WHITE);
-        fork("compteur", NULL);
+        fork("compteur", compteur);
+        print_processes();
         for (;;)
         {
             //printf("Hello World");

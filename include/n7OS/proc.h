@@ -35,4 +35,5 @@ process_t * add_process(const char *name, pid_t ppid, fnptr function);
 void remove_process_by_pid(pid_t pid);
 process_t *get_process_by_pid(pid_t pid);
 int exec_fork(const char *name, fnptr function);
+void print_processes();
 #endif

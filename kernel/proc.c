@@ -7,12 +7,12 @@ int current_process_index;
 // Function to initialize the process table, is supposed to be called before any fork
 void init_process_table(fnptr root_program)
 {
-    for (int i = 1; i < NB_PROC; i++)
+    for (int i = 0; i < NB_PROC; i++)
     {
         processes[i] = NULL;
         storing_table[i].is_available = 1;
     }
-    add_process("kernel", 0, root_program);
+    add_process("kernel", 0, root_program); 
     current_process_index = 0;
 }
 int preempt_pid()
@@ -32,8 +32,10 @@ process_t *add_process(const char *name, pid_t ppid, fnptr function)
 {
     printf("Adding process %s\n", name);
     int pid = preempt_pid();
+    printf("Pid %d\n", pid);
     if (pid == -1)
     {
+        printf("No available pid\n");
         return NULL; // no available pid
     }
     process_t *process = &storing_table[pid];
@@ -69,4 +71,15 @@ int exec_fork(const char *name, fnptr function)
     }
     processes[process->pid] = process;
     return process->pid;
+}
+void print_processes()
+{
+    printf("Printing processes\n");
+    for (int i = 0; i < NB_PROC; i++)
+    {
+        if (processes[i] != NULL)
+        {
+            printf("Process %s, pid %d, ppid %d\n", processes[i]->name, processes[i]->pid, processes[i]->ppid);
+        }
+    }
 }
