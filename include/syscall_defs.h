@@ -6,7 +6,7 @@ typedef int (*fn_ptr)();
 int sys_example();
 int sys_shutdown(int n);
 int sys_write(const char *s, int len);
-int sys_fork(const char *name, fn_ptr function);
+int sys_fork(const char *name, fnptr function);
 int sys_exit();
 extern fn_ptr syscall_table[NB_SYSCALL];
 

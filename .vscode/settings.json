@@ -14,6 +14,7 @@
         "*.rh": "cpp",
         "backup": "cpp",
         "unistd.h": "c",
-        "proc.h": "c"
+        "proc.h": "c",
+        "functional": "c"
     }
 }

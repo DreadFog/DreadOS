@@ -60,7 +60,7 @@ process_t *get_process_by_pid(pid_t pid)
 {
     return processes[pid];
 }
-/* int fork(const char *name, fnptr function)
+int exec_fork(const char *name, fnptr function)
 {
     process_t *process = add_process(name, current_process_index, function);
     if (process == NULL)
@@ -69,4 +69,4 @@ process_t *get_process_by_pid(pid_t pid)
     }
     processes[process->pid] = process;
     return process->pid;
-} */
+}
