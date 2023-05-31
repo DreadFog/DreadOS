@@ -3,7 +3,6 @@
 #define NB_PROC 256
 #define STACK_SIZE 4096
 #define CTX_SIZE 5
-#define QUANTUM 1
 #include <inttypes.h>
 #include <unistd.h>
 #include <stddef.h>
@@ -39,4 +38,5 @@ int exec_fork(const char *name, fnptr function);
 void print_processes();
 void scheduler();
 void stop_current_process();
+int get_current_process_id();
 #endif

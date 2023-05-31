@@ -46,6 +46,7 @@ void handler_timer()
     // call the scheduler every second
     if (curr_time % millis_per_sec == 0)
     {
-        scheduler();
+        //scheduler();
+        //printf("schedule called\n");
     }
 }
