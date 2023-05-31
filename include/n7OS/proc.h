@@ -3,11 +3,12 @@
 #define NB_PROC 256
 #define STACK_SIZE 4096
 #define CTX_SIZE 5
+#define QUANTUM 1
 #include <inttypes.h>
 #include <unistd.h>
 #include <stddef.h>
 #include <syscall_defs.h>
-typedef enum { EBX, ESP, EBP, ESI, EDI } REG;
+typedef enum { EBX, ESP, EBP, ESI, EDI } registry_t;
 typedef uint32_t pid_t;
 typedef enum {
     RUNNING,
@@ -36,4 +37,6 @@ void remove_process_by_pid(pid_t pid);
 process_t *get_process_by_pid(pid_t pid);
 int exec_fork(const char *name, fnptr function);
 void print_processes();
+void scheduler();
+void stop_current_process();
 #endif

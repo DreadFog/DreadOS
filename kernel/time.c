@@ -43,4 +43,9 @@ void handler_timer()
     // printf("inc");
     curr_time++;
     update_time();
+    // call the scheduler every second
+    if (curr_time % millis_per_sec == 0)
+    {
+        scheduler();
+    }
 }

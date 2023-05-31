@@ -54,5 +54,7 @@ int sys_fork(const char *name, fnptr function)
 // exit syscall
 int sys_exit()
 {
+  printf("exit syscall\n");
+  stop_current_process();
   return 1;
 }
