@@ -17,7 +17,7 @@ void scroll()
         scr_tab[i * 2] = ' ';
         scr_tab[i * 2 + 1] = 0x0F;
     }
-    line = 24;
+    line--;
 }
 
 void pointer()

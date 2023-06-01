@@ -7,12 +7,16 @@
 #include <unistd.h>
 #include <stddef.h>
 #include <syscall_defs.h>
+#include <malloc.h>
+#include <stdio.h>
+#include <stdbool.h>
 typedef enum { EBX, ESP, EBP, ESI, EDI } registry_t;
 typedef uint32_t pid_t;
 typedef enum {
     RUNNING,
     READY,
-    BLOCKED
+    BLOCKED,
+    SLEEPING,
 } PROCESS_STATE;
 typedef struct resource_t {
     void *resource;
@@ -39,4 +43,19 @@ void print_processes();
 void scheduler();
 void stop_current_process();
 int get_current_process_id();
+
+
+// =================== //
+// ==Sleeping processes ==//
+// =================== //
+typedef struct sleeping_process_t {
+    pid_t pid;
+    uint32_t wake_up_time;
+    struct sleeping_process_t *next;
+} sleeping_process_t;
+void add_sleeping_process(pid_t pid, uint32_t wake_up_time);
+void remove_sleeping_process(pid_t pid);
+void print_sleeping_processes();
+void wake_up_sleeping_processes();
+void sleep(uint32_t time);
 #endif

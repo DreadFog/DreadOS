@@ -4,6 +4,7 @@
 #   %esp + 4 : adresse de l'ancien contexte
 #   %esp + 8 : adresse du nouveau contexte
 ctx_sw:
+    cli
     # sauvegarde du contexte de l'ancien processus
     movl 4(%esp), %eax
     movl %ebx, (%eax)
@@ -19,5 +20,6 @@ ctx_sw:
     movl 12(%eax), %esi
     movl 16(%eax), %edi
     # on passe la main au nouveau processus
+    sti
     ret
 

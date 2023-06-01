@@ -1,8 +1,7 @@
 #include <n7OS/proc.h>
-#include <malloc.h>
-#include <stdio.h>
 process_t *processes[NB_PROC];
 process_t storing_table[NB_PROC];
+sleeping_process_t *sleeping_processes = NULL;
 int current_process_id;
 int current_process_index;
 extern void ctx_sw(uint32_t *old_ctx, uint32_t *new_ctx);
@@ -60,7 +59,7 @@ process_t *add_process(const char *name, pid_t ppid, fnptr function)
     process->sp = &process->stack[STACK_SIZE - 1];
     for (int i = 0; i < CTX_SIZE; i++)
     {
-            process->ctx[i] = 0;
+        process->ctx[i] = 0;
     }
     process->ctx[ESP] = (uint32_t)process->sp;
     process->state = READY;
@@ -82,7 +81,7 @@ int exec_fork(const char *name, fnptr function)
     process_t *process = add_process(name, current_process_id, function);
     if (process == NULL)
     {
-            return -1;
+        return -1;
     }
     processes[process->pid] = process;
     return process->pid;
@@ -94,36 +93,36 @@ void print_processes()
     printf("==========\n");
     for (int i = 0; i < NB_PROC; i++)
     {
-            if (processes[i] != NULL)
+        if (processes[i] != NULL)
+        {
+            printf("Process %s, pid %d, ppid %d\n", processes[i]->name, processes[i]->pid, processes[i]->ppid);
+            printf("Stack pointer %p\n", processes[i]->sp);
+            printf("Registers: ");
+            for (int j = 0; j < CTX_SIZE; j++)
             {
-                printf("Process %s, pid %d, ppid %d\n", processes[i]->name, processes[i]->pid, processes[i]->ppid);
-                printf("Stack pointer %p\n", processes[i]->sp);
-                printf("Registers: ");
-                for (int j = 0; j < CTX_SIZE; j++)
-                {
-                    printf("%d\n ", processes[i]->ctx[j]);
-                }
-                printf("==========\n");
+                printf("%d\n ", processes[i]->ctx[j]);
             }
+            printf("==========\n");
+        }
     }
 }
 
 void scheduler()
 { // scheduler that alternates between ready processes
-    //printf("Scheduler called by process of pid %d\n", current_process_id);
+    printf("Scheduler called by process of pid %d\n", current_process_id);
     process_t *current_process = processes[current_process_index];
     current_process->state = READY;
     // find the next process to run
     while (1)
     {
-            current_process_index = (current_process_index + 1) % NB_PROC;
-            if (processes[current_process_index] != NULL && processes[current_process_index]->state == READY)
-            {
-                processes[current_process_index]->state = RUNNING;
-                current_process_id = processes[current_process_index]->pid;
-                ctx_sw(current_process->ctx, processes[current_process_index]->ctx);
-                break;
-            }
+        current_process_index = (current_process_index + 1) % NB_PROC;
+        if (processes[current_process_index] != NULL && processes[current_process_index]->state == READY)
+        {
+            processes[current_process_index]->state = RUNNING;
+            current_process_id = processes[current_process_index]->pid;
+            ctx_sw(current_process->ctx, processes[current_process_index]->ctx);
+            break;
+        }
     }
     // if we still didn't find any process, we keep the current one
 }
@@ -147,4 +146,69 @@ void unblock_process(pid_t pid)
 int get_current_process_id()
 {
     return current_process_id;
+}
+
+// =================== //
+// ==Sleeping processes ==//
+// =================== //
+void print_sleeping_processes()
+{
+    printf("\nPrinting sleeping processes\n");
+    printf("==========\n");
+    sleeping_process_t *current = sleeping_processes;
+    while (current != NULL)
+    {
+        printf("Process %d, wake up time %d\n", current->pid, current->wake_up_time);
+        current = current->next;
+    }
+    printf("==========\n");
+}
+void add_sleeping_process_list(pid_t pid, uint32_t wake_up_time, sleeping_process_t *list)
+{
+    sleeping_process_t *tail = list->next;
+    if (tail == NULL)
+    {
+        sleeping_process_t *new = (sleeping_process_t *)malloc(sizeof(sleeping_process_t));
+        new->pid = pid;
+        new->wake_up_time = wake_up_time;
+        list->next = new;
+    }
+    else if (tail->wake_up_time >= wake_up_time)
+    {
+        // reduce the tail wait time by wake_up_time
+        tail->wake_up_time -= wake_up_time;
+        // put the new process as first element of the tail
+        sleeping_process_t *new = (sleeping_process_t *)malloc(sizeof(sleeping_process_t));
+        new->pid = pid;
+        new->wake_up_time = wake_up_time;
+        list->next = new;
+        new->next = tail;
+    }
+    else
+    { // decrement the relative time to sleep and go into recursion
+        add_sleeping_process_list(pid, wake_up_time - list->wake_up_time, sleeping_processes);
+    }
+}
+void add_sleeping_process(pid_t pid, uint32_t wake_up_time)
+{
+    sleeping_process_t *new = (sleeping_process_t *)malloc(sizeof(sleeping_process_t));
+    new->pid = pid;
+    new->wake_up_time = wake_up_time;
+    if (sleeping_processes == NULL)
+    {
+        sleeping_processes = new;
+    }
+    else if (sleeping_processes->wake_up_time >= wake_up_time) // new process shall be put first
+    {
+        // reduce the tail wait time by wake_up_time
+        sleeping_processes->wake_up_time -= wake_up_time;
+        sleeping_process_t *tail = sleeping_processes;
+        // put the new process as first
+        sleeping_processes = new;
+        new->next = tail;
+    }
+    else
+    { // decrement the relative time to sleep and go into recursion
+        add_sleeping_process_list(pid, wake_up_time - sleeping_processes->wake_up_time, sleeping_processes);
+    }
 }

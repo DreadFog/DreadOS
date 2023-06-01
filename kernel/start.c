@@ -8,17 +8,8 @@
 #include <n7OS/time.h>
 #include <stddef.h>
 #include <n7OS/proc.h>
-#define NB_ITER 5
-void compteur(void)
-{
-    change_color(BLACK, WHITE);
-    for (int i = 0; i < NB_ITER; i++)
-    {
-        printf("Hello %d from other process of pid %d\n", i, getpid());
-        scheduler();
-    }
-    exit();
-}
+#define NB_ITER 10000
+extern void compteur();
 void kernel_start(void)
 {
     init_handlers();
@@ -35,7 +26,6 @@ void kernel_start(void)
         {
             printf("Hello %d from kernel of pid %d  \n", i, getpid());
             // print_processes();
-            scheduler();
         }
         for (;;)
         {
