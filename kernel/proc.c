@@ -119,7 +119,7 @@ void print_processes()
 
 void scheduler()
 { // scheduler that alternates between ready processes
-    printf("Scheduler called by process of pid %d\n", current_process_id);
+    printf("Scheduler called while process of pid %d is active\n", current_process_id);
     process_t *current_process = processes[current_process_index];
     if (current_process != NULL)
     { // could be null when we call schedule just after the main process has been suspended

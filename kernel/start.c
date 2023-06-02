@@ -24,7 +24,7 @@ void kernel_start(void)
         fork("compteur1", compteur);
         for (int i = 0; i < NB_ITER; i++)
         {
-            printf("Hello %d from kernel of pid %d  \n", i, getpid());
+            //printf("Hello %d from kernel of pid %d  \n", i, getpid());
             print_processes();
         }
         for (;;)
