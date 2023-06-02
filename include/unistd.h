@@ -7,6 +7,7 @@
 #define NR_fork 3
 #define NR_exit 4
 #define NR_getpid 5
+#define NR_sleep 6
 typedef void (*fnptr)(void);
 // Fonction d'enveloppe sans argument
 #define syscall0(type,name) \
@@ -58,4 +59,5 @@ int write(const char *s, int len);
 int fork(const char *name, fnptr function);
 int exit();
 int getpid();
+int sleep(int n);
 #endif

@@ -4,9 +4,14 @@
 void compteur(void)
 {
     change_color(BLACK, WHITE);
-    for (int i = 0; i < 10000; i++)
+    for (int i = 0; i < 500; i++)
     {
-        printf("Hello %d from other process of pid %d\n", i, getpid());
+        printf("First wave of Hello %d from other process of pid %d\n", i, getpid());
+    }
+    //sleep(1000);
+    for (int i = 0; i < 500; i++)
+    {
+        printf("Second wave of Hello %d from other process of pid %d\n", i, getpid());
     }
     exit();
 }

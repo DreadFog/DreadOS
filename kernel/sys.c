@@ -17,6 +17,7 @@ void init_syscall()
   add_syscall(NR_fork, (void *)sys_fork);
   add_syscall(NR_exit, (void *)sys_exit);
   add_syscall(NR_getpid, (void *)sys_getpid);
+  add_syscall(NR_sleep, (void *)sys_sleep);
   // initialisation de l'IT soft qui gère les appels systeme
   init_irq_entry(0x80, (uint32_t)handler_syscall);
 }
@@ -63,4 +64,9 @@ int sys_exit()
 int sys_getpid()
 {
   return get_current_process_id();
+}
+// sleep syscall
+int sys_sleep(int n)
+{
+  return do_sleep(n);
 }

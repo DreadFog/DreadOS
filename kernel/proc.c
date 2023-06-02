@@ -5,6 +5,7 @@ sleeping_process_t *sleeping_processes = NULL;
 int current_process_id;
 int current_process_index;
 extern void ctx_sw(uint32_t *old_ctx, uint32_t *new_ctx);
+extern void process_wrapper();
 // Function to initialize the process table, is supposed to be called before any fork
 
 void init_process_table(fnptr root_program)
@@ -30,6 +31,14 @@ void init_process_table(fnptr root_program)
     memcpy(k->stack, stack_bottom, STACK_SIZE * sizeof(uint32_t));
     processes[k->pid] = k;
 }
+void add_to_pointer_list(int pid) {
+    for (int i = 0; i < NB_PROC; i++) {
+        if (processes[i] == NULL) {
+            processes[i] = &storing_table[pid];
+            break;
+        }
+    }
+}
 int preempt_pid()
 {
     for (int i = 0; i < NB_PROC; i++)
@@ -44,7 +53,7 @@ int preempt_pid()
     return -1;
 }
 process_t *add_process(const char *name, pid_t ppid, fnptr function)
-{
+{ // call the wrapper add_process and put to ebx the address of the function
     int pid = preempt_pid();
     if (pid == -1)
     {
@@ -55,13 +64,14 @@ process_t *add_process(const char *name, pid_t ppid, fnptr function)
     process->name = name;
     process->ppid = ppid;
     process->pid = pid;
-    process->stack[STACK_SIZE - 1] = (uint32_t)function;
+    process->stack[STACK_SIZE - 1] = (uint32_t) function;
     process->sp = &process->stack[STACK_SIZE - 1];
     for (int i = 0; i < CTX_SIZE; i++)
     {
         process->ctx[i] = 0;
     }
     process->ctx[ESP] = (uint32_t)process->sp;
+    //process->ctx[EBX] = (uint32_t) function;
     process->state = READY;
     process->resources = NULL;
     return process;
@@ -111,7 +121,10 @@ void scheduler()
 { // scheduler that alternates between ready processes
     printf("Scheduler called by process of pid %d\n", current_process_id);
     process_t *current_process = processes[current_process_index];
-    current_process->state = READY;
+    if (current_process != NULL)
+    { // could be null when we call schedule just after the main process has been suspended
+        current_process->state = READY;
+    }
     // find the next process to run
     while (1)
     {
@@ -142,6 +155,7 @@ void block_current_process()
 void unblock_process(pid_t pid)
 {
     storing_table[pid].state = READY;
+    add_to_pointer_list(pid);   
 }
 int get_current_process_id()
 {
@@ -191,7 +205,9 @@ void add_sleeping_process_list(pid_t pid, uint32_t wake_up_time, sleeping_proces
 }
 void add_sleeping_process(pid_t pid, uint32_t wake_up_time)
 {
+    printf("Adding process %d to sleep for %d\n", pid, wake_up_time);
     sleeping_process_t *new = (sleeping_process_t *)malloc(sizeof(sleeping_process_t));
+    printf("malloc'd\n");
     new->pid = pid;
     new->wake_up_time = wake_up_time;
     if (sleeping_processes == NULL)
@@ -210,5 +226,30 @@ void add_sleeping_process(pid_t pid, uint32_t wake_up_time)
     else
     { // decrement the relative time to sleep and go into recursion
         add_sleeping_process_list(pid, wake_up_time - sleeping_processes->wake_up_time, sleeping_processes);
+    }
+}
+int do_sleep(int time)
+{
+    process_t *current_process = processes[current_process_index];
+    current_process->state = SLEEPING;
+    processes[current_process_index] = NULL;
+    add_sleeping_process(current_process->pid, time);
+    scheduler();
+    return 0;
+}
+void update_sleeping_processes()
+{ // check the time to sleep, if it is equal to zero add it back to the list of ready processes
+    sleeping_process_t *head = sleeping_processes;
+    if (head == NULL)
+    {
+        return; // no sleeping processes
+    }
+    if (head->wake_up_time == 0 ) {
+        // wake it up, remove it from the list and add it to the ready processes
+        sleeping_processes = head->next;
+        unblock_process(head->pid);
+        //free(head);
+    } else {
+        head->wake_up_time--;
     }
 }

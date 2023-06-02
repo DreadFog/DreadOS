@@ -57,5 +57,5 @@ void add_sleeping_process(pid_t pid, uint32_t wake_up_time);
 void remove_sleeping_process(pid_t pid);
 void print_sleeping_processes();
 void wake_up_sleeping_processes();
-void sleep(uint32_t time);
+int do_sleep(int time);
 #endif

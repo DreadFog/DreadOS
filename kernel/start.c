@@ -25,7 +25,7 @@ void kernel_start(void)
         for (int i = 0; i < NB_ITER; i++)
         {
             printf("Hello %d from kernel of pid %d  \n", i, getpid());
-            // print_processes();
+            print_processes();
         }
         for (;;)
         {

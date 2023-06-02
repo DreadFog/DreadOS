@@ -17,6 +17,7 @@
         "proc.h": "c",
         "functional": "c",
         "time.h": "c",
-        "string_view": "c"
+        "string_view": "c",
+        "syscall_defs.h": "c"
     }
 }

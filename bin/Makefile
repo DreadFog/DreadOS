@@ -2,7 +2,7 @@ CC= gcc
 CFLAGS= -m32 -std=c99 -nostdlib -nostdinc -fno-builtin -fno-stack-protector \
          -nostartfiles -nodefaultlibs -Wall -Werror -I../include
 
-LD= ld
+LD= ld.bfd
 LDFLAGS = -melf_i386
 
 AS= gcc
