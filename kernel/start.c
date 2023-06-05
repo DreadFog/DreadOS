@@ -22,10 +22,13 @@ void kernel_start(void)
     while (1)
     {
         fork("compteur1", compteur);
+        fork("compteur2", compteur);
+
         for (int i = 0; i < NB_ITER; i++)
         {
             //printf("Hello %d from kernel of pid %d  \n", i, getpid());
             print_processes();
+            //shutdown(1);
         }
         for (;;)
         {
@@ -33,3 +36,13 @@ void kernel_start(void)
         }
     }
 }
+/*
+Ce qui marche:
+- Syscalls (exit, fork, getpid,  shutdown, write)
+- Interruptions
+- Gestion des processus (création, fin, affichage, scheduler)
+- Gestion de la console (affichage, changement de couleur, effacement)
+
+Ce qui ne marche pas:
+- Suspension des processus (sleep) à cause d'une erreur malloc
+*/

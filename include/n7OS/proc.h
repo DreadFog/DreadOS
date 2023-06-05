@@ -1,6 +1,6 @@
 #ifndef __PROC_H__
 #define __PROC_H__
-#define NB_PROC 256
+#define NB_PROC 1024
 #define STACK_SIZE 4096
 #define CTX_SIZE 5
 #include <inttypes.h>
